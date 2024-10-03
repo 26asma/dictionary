@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #2a2a2a;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: white;
+        }
+        .search-box {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 1rem;
+        }
+        button {
+            padding: 12px;
+            background-color: white;
+            color: #1e1e1e;
+            border: none;
+            border-radius: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        button:hover {
+            background-color: #555756;
+            color: white;
+        }
+        .result {
+            display: none;
+            margin-top: 30px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 15px;
+        }
+        .word {
+            font-weight: 500;
+            font-size: 1.8rem;
+            color: rgb(236, 231, 231);
+        }
+        .phonetic {
+            font-size: 1.1rem;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        .definition {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #ddd;
+        }
+        .eg {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #ddd;
+        }
+        .error {
+            color: #ff4d4d;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Dictionary</h1>
+    <div class="search-box">
+        <input type="text" id="word-input" placeholder="Enter a word...">
+        <button onclick="fetchWord()">Search</button>
+    </div>
+    <div class="result" id="result">
+        <div class="word" id="word"></div>
+       
+        <div class="phonetic" id="phonetic"></div>
+        <div class="definition" id="definition"></div>
+        <div class="eg" id="eg"></div>
+    </div>
+    <div class="error" id="error"></div>
+</div>
+
+<script>
+    function fetchWord() {
+    const word = document.getElementById('word-input').value;
+
+    const resultDiv = document.getElementById('result');
+    const errorDiv = document.getElementById('error');
+  
+
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.title) {
+                errorDiv.textContent = 'Word not found!';
+                resultDiv.style.display = 'none';
+            } else {
+                const wordInfo = data[0];
+                const meanings = wordInfo.meanings[0];
+
+                document.getElementById('word').textContent = wordInfo.word;
+                document.getElementById('phonetic').textContent = wordInfo.phonetic || '';
+                document.getElementById('definition').textContent = meanings.definitions[0].definition;
+           
+                 
+                
+                const example = meanings.definitions[0].example;
+                document.getElementById('eg').textContent = example ? `Example: ${example}` : `Everyone noticed the effect of ${word} on the outcome. `;
+
+                resultDiv.style.display = 'block';
+                errorDiv.textContent = '';
+            }
+        })
+        
+        .catch(() => {
+            errorDiv.textContent = 'Error fetching the word!';
+            resultDiv.style.display = 'none';
+        });
+      
+}
+
+
+</script>
+
+</body>
+</html>
